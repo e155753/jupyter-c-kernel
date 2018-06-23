@@ -66,19 +66,19 @@ class RealTimeSubprocess(subprocess.Popen):
             self._write_to_stderr(stderr_contents)
 
 
-class CKernel(Kernel):
-    implementation = 'jupyter_c_kernel'
+class CbCKernel(Kernel):
+    implementation = 'jupyter_CbC_kernel'
     implementation_version = '1.0'
-    language = 'c'
+    language = 'CbC'
     language_version = 'C11'
-    language_info = {'name': 'c',
+    language_info = {'name': 'CbC',
                      'mimetype': 'text/plain',
                      'file_extension': '.c'}
-    banner = "C kernel.\n" \
+    banner = "CbC kernel.\n" \
              "Uses gcc, compiles in C11, and creates source code files and executables in temporary folder.\n"
 
     def __init__(self, *args, **kwargs):
-        super(CKernel, self).__init__(*args, **kwargs)
+        super(CbCKernel, self).__init__(*args, **kwargs)
         self.files = []
         mastertemp = tempfile.mkstemp(suffix='.out')
         os.close(mastertemp[0])
@@ -153,7 +153,7 @@ class CKernel(Kernel):
                 p.write_contents()
                 if p.returncode != 0:  # Compilation failed
                     self._write_to_stderr(
-                            "[C kernel] GCC exited with code {}, the executable will not be executed".format(
+                            "[CbC kernel] GCC exited with code {}, the executable will not be executed".format(
                                     p.returncode))
                     return {'status': 'ok', 'execution_count': self.execution_count, 'payload': [],
                             'user_expressions': {}}
@@ -164,7 +164,7 @@ class CKernel(Kernel):
         p.write_contents()
 
         if p.returncode != 0:
-            self._write_to_stderr("[C kernel] Executable exited with code {}".format(p.returncode))
+            self._write_to_stderr("[CbC kernel] Executable exited with code {}".format(p.returncode))
         return {'status': 'ok', 'execution_count': self.execution_count, 'payload': [], 'user_expressions': {}}
 
     def do_shutdown(self, restart):
